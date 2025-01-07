@@ -1,1 +1,1002 @@
-test18
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/archerdxinc/nf-analysis/main/nextflow_schema.json",
+  "title": "archerdxinc/nf-analysis pipeline parameters",
+  "description": "Archer Analysis 8.0 Nextflow Workflows Repository",
+  "type": "object",
+  "$defs": {
+    "nextflow_settings": {
+      "title": "Nextflow Settings",
+      "type": "object",
+      "fa_icon": "fab fa-acquisitions-incorporated",
+      "description": "Settings specific to Nextflow Execution",
+      "help_text": "If you are running on a smaller system, a pipeline step requesting more resources than are available may cause the Nextflow to stop the run with an error. These options allow you to cap the maximum resources requested by any single job so that the pipeline will run on your system.\n\nNote that you can not _increase_ the resources requested by any job using these options. For that you will need your own configuration file. See [the nf-core website](https://nf-co.re/usage/configuration) for details.",
+      "properties": {
+        "max_cpus": {
+          "type": "integer",
+          "description": "Maximum number of CPUs that can be requested for any single job.",
+          "default": 16,
+          "fa_icon": "fas fa-microchip",
+          "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`",
+          "minimum": 1
+        },
+        "max_memory": {
+          "type": "string",
+          "description": "Maximum amount of memory that can be requested for any single job.",
+          "default": "128.GB",
+          "fa_icon": "fas fa-memory",
+          "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+          "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`"
+        },
+        "max_time": {
+          "type": "string",
+          "description": "Maximum amount of time that can be requested for any single job.",
+          "default": "240.h",
+          "fa_icon": "far fa-clock",
+          "pattern": "^(\\d+\\.?\\s*(s|m|h|d|day)\\s*)+$",
+          "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
+        },
+        "publish_dir_mode": {
+          "type": "string",
+          "default": "copy",
+          "description": "Method used to save pipeline results to output directory.",
+          "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
+          "fa_icon": "fas fa-copy",
+          "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"]
+        }
+      }
+    },
+    "general_analysis_settings": {
+      "title": "General Analysis Settings",
+      "type": "object",
+      "description": "General Analysis Settings",
+      "default": "",
+      "properties": {
+        "MIN_AVERAGE_UNIQUE_DNA_AND_AMBIG_START_SITES_PER_GSP2": {
+          "type": "integer",
+          "default": 50,
+          "description": "Min Average Unique DNA and AMBIG Start Sites per GSP2",
+          "help_text": "Minimum average unique start sites per gsp2 required to pass DNA variation QC.",
+          "minimum": 0
+        },
+        "MIN_AVERAGE_UNIQUE_RNA_START_SITES_PER_GSP2_CONTROLS": {
+          "type": "integer",
+          "default": 10,
+          "description": "Min Average Unique RNA Start Sites per GSP2 Controls",
+          "help_text": "Minimum average number of unique start sites per control gsp2 required to pass fusion QC or RNA variation QC.",
+          "minimum": 0
+        },
+        "ERROR_CORRECTION": {
+          "type": "boolean",
+          "default": true,
+          "description": "Error Correction",
+          "help_text": "Use the Molecular Barcode-based error correction for Fusion/Isoform, SNP/InDel, and Immune Repertoire analyses. Run time of the analysis may increase significantly."
+        },
+        "NORMALIZATION_LEVEL": {
+          "type": "integer",
+          "default": 60000000,
+          "description": "Read Depth Normalization",
+          "help_text": "Randomly subsamples all samples to the provided read depth. 0 represents no normalization.",
+          "minimum": 0
+        },
+        "BARCODE_LENGTH": {
+          "type": "integer",
+          "default": 8,
+          "description": "Barcode Length",
+          "help_text": "The number of nucleotides in molecular barcodes.",
+          "enum": [8, 12]
+        },
+        "COMMON_REGION_SET": {
+          "type": "integer",
+          "default": 0,
+          "description": "Common Region Set",
+          "help_text": "The common region sequence introduced by MBC Adapters during library preparation.\n0: Dynamic search for correct set\n1: Standard Illumina/Ion Torrent Set\n2: Illumina Expanded Set Option 2\n3: Legacy Ion Torrent Set\n4: Illumina Expanded Set Option 1",
+          "enum": [0, 1, 2, 3, 4]
+        },
+        "NUM_THREADS": {
+          "type": "integer",
+          "default": 2,
+          "description": "Threads Per Sample",
+          "help_text": "Number of threads to use to process each sample. Ensure enough compute resources are available.",
+          "minimum": 1
+        },
+        "PRE_POST_READ_CLEANER": {
+          "type": "boolean",
+          "description": "Pre-/Post-Alignment Read Cleaner",
+          "help_text": "Turn on pre-/post-alignment read cleaner, to speed up read cleaning"
+        },
+        "READ_CLEANER_MERGE": {
+          "type": "boolean",
+          "description": "Merge Reads in Read Cleaner",
+          "help_text": "Merge reads for fusion calling in read cleaner instead of using pemerge"
+        },
+        "DEBUG": {
+          "type": "boolean",
+          "description": "Debug",
+          "help_text": "If Debug is turned on, all temp files will be kept within the job directory for debugging purposes. If turned off, temp files will be removed after the job is completed."
+        },
+        "UNIFIED_VCF": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Unified VCF",
+          "help_text": "Converts each sample's workflow results to VCFs, and creates a unified VCF"
+        },
+        "DETERMINISTIC_DEDUPLICATION": {
+          "type": "boolean",
+          "default": true,
+          "description": "Deterministic output from deduplication",
+          "help_text": "Ensure that the output of deduplication is deterministic when the number of threads per sample is varied."
+        }
+      }
+    },
+    "experimental_account_settings": {
+      "title": "Experimental Account Settings",
+      "type": "object",
+      "description": "Experimental Account Settings",
+      "default": "",
+      "properties": {
+        "SAMPLE_QC": {
+          "type": "boolean",
+          "help_text": "Turns the Sample QC pipeline on or off. The pipeline includes: Chewbacca, Readthrough and Mispriming.",
+          "description": "Sample QC"
+        },
+        "CHEWBACCA": {
+          "type": "boolean",
+          "description": "Chew back analysis",
+          "help_text": "Execute chew back analysis (Chewbacca) during Sample QC"
+        },
+        "SKIP_SUBSAMPLING": {
+          "type": "boolean",
+          "description": "Skip Subsampling",
+          "help_text": "Turns off subsampling at the deduplication level."
+        },
+        "SKIP_DEDUPLICATION": {
+          "type": "boolean",
+          "description": "Skip Deduplication",
+          "help_text": "Skip the deduplication step and run analysis on the adapter trimmed reads."
+        },
+        "DISPLAY_INTERGENIC_STRUCTURAL_VARIATIONS": {
+          "type": "boolean",
+          "description": "Display Intergenic Structural Variations",
+          "help_text": "Enables the display of structural variations where one leg of the structural variation aligns to an intergenic region."
+        },
+        "DETERMINISTIC_NORMALIZATION": {
+          "type": "boolean",
+          "default": true,
+          "description": "Deterministic Normalization",
+          "help_text": "When enabled, the pipeline will ensure that random subsampling will be deterministic for a given normalization depth. This means that multiple re-runs or clones of a job will use the same subset of randomly subsampled FASTQ reads for every sample for every run. When disabled, the subsampled FASTQ reads will be different for each re-run or cloned job."
+        },
+        "BARCODE_HAMMING_DISTANCE": {
+          "type": "integer",
+          "default": 2,
+          "description": "Barcode Hamming Distance",
+          "help_text": "The number of mismatches allowed during molecular barcode bin combining.",
+          "enum": [1, 2]
+        },
+        "GSP2_ASSIGNMENT": {
+          "type": "string",
+          "default": "NO_INDEL",
+          "description": "GSP2 Assignment Mode",
+          "help_text": "Allow or disallow indels during GSP2 assignment. Or GSP2s can be assigned during molbar creation, so that the molbar contains the true GSP2 sequence instead of the R2 sequence. This option always enables matching with indels.",
+          "enum": ["NO_INDEL", "INDEL", "IN_MOLBAR"]
+        },
+        "BARCODE_COMPRESSION_DEPTH_THRESHOLD": {
+          "type": "integer",
+          "default": 5,
+          "description": "Barcode Compression Depth Threshold",
+          "help_text": "Depth threshold to use for barcode compression",
+          "minimum": 1
+        },
+        "MAX_HOMOPOLYMER_TAIL": {
+          "type": "integer",
+          "default": 0,
+          "description": "Maximum Homopolymer Tail Length",
+          "help_text": "Any longer homopolymer tail will be trimmed. Default (0) turns off trimming.",
+          "minimum": 0
+        },
+        "TRIM_ONLY_G_HOMOPOLYMER_TAIL": {
+          "type": "boolean",
+          "description": "Trim Only Poly-G Tails",
+          "help_text": "When enabled and 'Maximum Homopolymer Tail Length' is non-zero, only poly-G tails will be trimmed instead of any homopolymer tail."
+        }
+      }
+    },
+    "pipeline_configuration_parameters": {
+      "title": "Pipeline Configuration Parameters",
+      "type": "object",
+      "description": "Pipeline Configuration Parameters",
+      "default": "",
+      "properties": {
+        "TEMP_DIRECTORY": {
+          "type": "string",
+          "description": "Temp Directory",
+          "help_text": "The directory for temporary files."
+        },
+        "OUTPUT_DIRECTORY": {
+          "type": "string",
+          "description": "Output Directory",
+          "help_text": "The directory for output files."
+        },
+        "TARGET_GTF_FILE": {
+          "type": "string",
+          "format": "file-path",
+          "help_text": "The target regions for the assay (GTF file).",
+          "description": "Target Region"
+        },
+        "TARGETED_MUTATIONS_FILE": {
+          "type": "string",
+          "description": "Targeted Mutations",
+          "help_text": "Using a Targeted Mutations VCF file will force the SNP/InDel pipeline to report on all mutations listed in the file (as PRESENT, NO CALL, or NO COVERAGE)."
+        },
+        "DNACOV_TARGETS_FILE": {
+            "type": "string",
+            "description": "DNA QC Target Regions",
+            "help_text": "Regions of interest to report coverage metrics."
+        },
+        "SAMPLE": {
+          "type": "string",
+          "description": "Sample File(s)",
+          "help_text": "The sample files for this run."
+        },
+        "input": {
+          "type": "string",
+          "description": "Input sample sheet",
+          "help_text": "The sample sheet containing paths to the fastqs."
+        },
+        "INPUT_MATERIAL": {
+          "type": "string",
+          "enum": ["rna", "dna", "cfdna"],
+          "description": "Input Material",
+          "help_text": "The type of genetic material sequenced."
+        },
+        "PLATFORM": {
+          "type": "string",
+          "enum": ["ION", "ILLUMINA"],
+          "description": "Platform",
+          "help_text": "Sequencing platform and library type. Illumina paired-end libraries and Life Technologies' Ion Torrent single read libraries are currently supported."
+        },
+        "LYMPHOMA_ANALYSIS": {
+          "type": "boolean",
+          "default": true,
+          "description": "Lymphoma Analysis",
+          "help_text": "Toggle for the Lymphoma Analysis workflow."
+        },
+        "IR_PROFILING": {
+          "type": "boolean",
+          "description": "Immune Repertoire",
+          "help_text": "Profile immune repertoire from RNA data."
+        },
+        "COPY_NUMBER_VARIATIONS": {
+          "type": "boolean",
+          "description": "DNA Copy Number Variations",
+          "help_text": "Produces data on relative copy number for each of the targets."
+        },
+        "COHORTLESS_COPY_NUMBER_VARIATIONS": {
+          "type": "boolean",
+          "description": "CNV 2.0",
+          "help_text": "Produces data on relative copy number for each of the targets (no normal cohort)."
+        },
+        "USE_SOMATIC_VARIANT_CALLER": {
+          "type": "boolean",
+          "description": "Use Somatic Variant Caller",
+          "help_text": "Toggle for Germline/Somatic Variant Caller."
+        },
+        "ONLY_REPORT_TARGETED_MUTATIONS": {
+          "type": "boolean",
+          "description": "Only Report Targeted Mutations",
+          "help_text": "Select this option to only include targeted variant analysis, (i.e. just those in the Targeted Mutations VCF file)."
+        },
+        "DNA_VARIATIONS": {
+          "type": "boolean",
+          "description": "DNA SNP/InDel",
+          "help_text": "Detect small variants in DNA samples."
+        },
+        "RNA_VARIATIONS": {
+          "type": "boolean",
+          "description": "RNA SNP/InDel",
+          "help_text": "Detect small variants in RNA samples."
+        },
+        "DNA_DELETIONS": {
+          "type": "boolean",
+          "description": "DNA Structural Variations",
+          "help_text": "Detect structural anomalies in DNA including large deletions, inversions, and internal tandem repeats."
+        },
+        "RNA_FUSIONS": {
+          "type": "boolean",
+          "description": "RNA Fusion",
+          "help_text": "Detect gene fusions and other isoforms in RNA samples."
+        },
+        "IR_PROFILING_HYPERMUTATION": {
+          "type": "boolean",
+          "description": "IGHV Hypermutation",
+          "help_text": "Choose whether to calculate V-segment Hypermutation status (for top 5 most frequent clonotypes IGH libraries)."
+        },
+        "DNA_TARGET_COVERAGE": {
+          "type": "boolean",
+          "description": "DNA Target Coverage",
+          "help_text": "Run the DNA Target Coverage workflow."
+        },
+        "PREPROCESSING_ONLY": {
+          "type": "boolean",
+          "description": "Preprocessing Only",
+          "help_text": "This option will stop the analysis pipeline after deduplication and prior to genome alignment."
+        },
+        "JOB_ID": {
+          "type": "string",
+          "default": "JOB_ID_000",
+          "description": "Job ID",
+          "help_text": "The ID for the job"
+        },
+        "PREPROCESSING_ONLY_RUN_READ_ALIGNMENT": {
+          "type": "boolean",
+          "description": "Preprocessing and Read Alignment Only",
+          "help_text": "This option will only run deduplication and genome alignment followed by clean up."
+        },
+        "MSI": {
+          "type": "boolean",
+          "description": "Microsatellite Instability",
+          "help_text": "Determine instability of sample from targeted microsatellites"
+        },
+        "TMB": {
+          "type": "boolean",
+          "description": "Tumor Mutational Burden",
+          "help_text": "Determine whether somatic variants detected in sample are indicative of tumor mutational burden"
+        },
+        "ASCN": {
+          "type": "boolean",
+          "description": "ASCN",
+          "help_text": "Produces data on allele-specific copy number for each of the targets."
+        },
+        "HRD": {
+          "type": "boolean",
+          "description": "HRD",
+          "help_text": "Homologous Recombination Deficiency (HRD) analysis"
+        }
+      },
+      "required": [
+        "TEMP_DIRECTORY",
+        "OUTPUT_DIRECTORY",
+        "TARGET_GTF_FILE",
+        "input",
+        "PLATFORM",
+        "SAMPLE"
+      ]
+    },
+    "network_settings": {
+      "title": "Network Settings",
+      "type": "object",
+      "description": "Network Settings",
+      "default": "",
+      "properties": {
+        "HEAD_NODE_IP": {
+          "type": "string",
+          "description": "The Head Node IP address"
+        },
+        "MEMCACHE_IP": {
+          "type": "string",
+          "description": "The memcache server IP address"
+        },
+        "MEMCACHE_PORT": {
+          "type": "string",
+          "description": "The memcache port number"
+        },
+        "STASH_DIRECTORY": {
+          "type": "string",
+          "description": "File path to the stash directory"
+        }
+      }
+    },
+    "structural_variant_analysis_settings": {
+      "title": "Structural Variant Analysis Settings",
+      "type": "object",
+      "description": "Structural Variant Analysis Settings",
+      "default": "",
+      "properties": {
+        "DISPLAY_INTRONIC_STRUCTURAL_VARIATIONS": {
+          "type": "boolean",
+          "default": true,
+          "description": "Display Intronic Structural Variants",
+          "help_text": "Configures the pipeline to look for intronic structural variants."
+        },
+        "MIN_READS_FOR_VALID_STRUCTURAL_VARIATION": {
+          "type": "integer",
+          "default": 5,
+          "description": "Min Contig Depth",
+          "help_text": "The minimum number of reads supporting an assembled contig for that contig to contribute to structural variant detections. Contigs with read support below this threshold are dropped.",
+          "minimum": 2
+        },
+        "XCONTAM_SINGLE_PANEL": {
+          "type": "boolean",
+          "default": true,
+          "description": "Cross-Contamination Single Panel",
+          "help_text": "Detect cross-contamination between samples run with the same panel."
+        },
+        "XCONTAM_FUSION_CONFIDENCE_THRESHOLD": {
+          "type": "number",
+          "default": 0.05,
+          "description": "Cross-Contamination Fusion Confidence Threshold",
+          "help_text": "Relative likelihood of contamination at which to downgrade fusion confidence.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "EXPRESSION_IMBALANCE": {
+          "type": "boolean",
+          "default": true,
+          "description": "Expression Imbalance",
+          "help_text": "Run the process to detect expression imbalance per transcript."
+        },
+        "MIN_UNIQUE_START_SITES_FOR_VALID_STRUCTURAL_VARIATION": {
+          "type": "integer",
+          "default": 3,
+          "description": "Min Unique Start Sites for Valid Structural Variant",
+          "help_text": "Minimum number of unique start sites of breakpoint-spanning reads required to report a structural variant.",
+          "minimum": 2
+        },
+        "STRUCTURAL_VARIATION_PERCENT_OF_GSP2_READS": {
+          "type": "number",
+          "default": 10.0,
+          "description": "Structural Variant Percent of GSP2 Reads",
+          "help_text": "The minimum percentage of reads per GSP2 to qualify for a high-confidence structural variant call.",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "EXPRESSION_IMBALANCE_ALPHA": {
+          "type": "number",
+          "default": 0.05,
+          "description": "Expression Imbalance Alpha",
+          "help_text": "The significance threshold for determining if a gene has expression imbalance due to partial expression of fusion target.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "CALL_TRANSCRIPTIONAL_READTHROUGH_EVENTS_WEAK": {
+          "type": "boolean",
+          "description": "Call Transcriptional Read Through Events Weak",
+          "help_text": "When it has been identified that a fusion is a transcriptional read through event, regardless of any other criteria, setting this to 'On' will mark the fusion as weak."
+        },
+        "RNA_EXPRESSION_VISUALIZATION": {
+          "type": "boolean",
+          "default": true,
+          "description": "RNA Expression Visualization",
+          "help_text": "Generates a heat map visualization of the RNA expression for all samples in the run."
+        },
+        "RNA_EXPRESSION_VISUALIZATION_VMIN": {
+          "type": "integer",
+          "default": -6,
+          "description": "Min RNA Relative Expression Value",
+          "help_text": "Minimum value used in RNA expression visualization. Any value below this limit will be truncated.",
+          "minimum": -18
+        },
+        "RNA_EXPRESSION_VISUALIZATION_VMAX": {
+          "type": "integer",
+          "default": 6,
+          "description": "Max RNA Relative Expression Value",
+          "help_text": "Maximum value used in RNA expression visualization. Any value above this limit will be truncated.",
+          "minimum": -17
+        },
+        "RNA_EXPRESSION_OUTLIERS": {
+          "type": "boolean",
+          "description": "RNA Expression Outliers",
+          "help_text": "Detect abnormally high RNA expression levels."
+        },
+        "MIN_REPORTABLE_RNA_WT_PERCENT_OF_DEPTH": {
+          "type": "number",
+          "default": 0.0,
+          "description": "Min Reportable RNA WT Percent of Reads",
+          "help_text": "The minimum reportable percentage of reads for WT RNA candidates",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "REQUIRE_DNA_FUSION_SAME_CHROM_STRAND": {
+          "type": "boolean",
+          "description": "Require DNA Structural Variant to have the same Chrom/Strand",
+          "help_text": "If true, configures the pipeline to only report DNA fusions that have the same chromosome and strand for all legs of the fusion. If false, all candidates will be reported."
+        }
+      }
+    },
+    "variations_mutations_settings": {
+      "title": "Variations/Mutations Settings",
+      "type": "object",
+      "description": "Variations/Mutations Settings",
+      "default": "",
+      "properties": {
+        "MIN_DEPTH_FOR_VARIANT_CALL": {
+          "type": "integer",
+          "default": 4,
+          "description": "Min Depth for Variant Call",
+          "help_text": "Require at least this number of alternate observations (AO) supporting an allele in order to evaluate the position.",
+          "minimum": 2
+        },
+        "MAPQ_THRESHOLD_FOR_VARIANT_CALL": {
+          "type": "integer",
+          "default": 0,
+          "description": "MAPQ Threshold for Variant Call",
+          "help_text": "Variants will only be called using reads that have a MAPQ of at least this value.",
+          "minimum": 0
+        },
+        "MIN_BASEQUAL_FOR_VARIANT_CALL": {
+          "type": "integer",
+          "default": 20,
+          "description": "Min Basequal for Variant Call",
+          "help_text": "Exclude alleles from SNPs/InDel analysis if their supporting Phred-scale base quality is less than this value.",
+          "minimum": 0,
+          "maximum": 99
+        },
+        "MIN_ALLELE_FRACTION_FOR_VARIANT_CALL": {
+          "type": "number",
+          "default": 0.001,
+          "description": "Min Allele Fraction for Variant Call",
+          "help_text": "Require at least this fraction of observations (AO/DP) supporting an alternate allele in order to evaluate the position in SNPs/InDel analysis for a given sample.",
+          "minimum": 0.000001,
+          "maximum": 1.0
+        },
+        "MIN_PHRED_QUAL_SCORE_FOR_VARIANT_CALL": {
+          "type": "integer",
+          "default": 1,
+          "description": "Min Phred Qual Score for Variant Call",
+          "help_text": "Any variant calls with a Phred scaled quality lower than this will not be reported. Useful to filter out low QUAL SNPs/INDELs (default is 1).",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "VARIANT_DOWNSTREAM_ROI_SIZE": {
+          "type": "integer",
+          "default": 400,
+          "description": "Variant Downstream ROI Size",
+          "help_text": "The number of bases downstream of the targeted GSP2s that are considered when looking for variants. Only applies when not already specified by the Target Region GTF file, and/or if targeted mutations are not specified.",
+          "minimum": 0
+        },
+        "OUTLIER_DETECTION": {
+          "type": "boolean",
+          "default": true,
+          "description": "Outlier Detection",
+          "help_text": "When enabled, intra-job samples will be used to calculate the sequencing noise at a given position. The calculation will set the confidence in a low AF variant call."
+        },
+        "MIN_DAO_FOR_OUTLIER_DETECTION_CALCULATION": {
+          "type": "integer",
+          "default": 0,
+          "description": "Min DAO for Outlier Detection Calculation",
+          "help_text": "The minimum number of Deep Alternate Observations on a variant required to perform Allele Fraction Outlier P-value calculations. Decreasing this parameter below 3 will increase analysis runtime.",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "DEEP_SHALLOW_THRESHOLD": {
+          "type": "integer",
+          "default": 5,
+          "description": "Deep Shallow Threshold",
+          "help_text": "The depth at which a molecular bin will be considered a 'deep' bin. Deep bins will be considered higher confident reads as they have been assembled from multiple PCR duplicates.",
+          "minimum": 2
+        },
+        "VEP_REPORT_EVERYTHING": {
+          "type": "boolean",
+          "description": "VEP Report Everything",
+          "help_text": "When enabled, VEP is instructed to report --everything, and predicted transcripts will be included in the reported annotations. This will likely substantially increase processing time."
+        }
+      }
+    },
+    "dna_target_coverage_settings": {
+      "title": "DNA Target Coverage Settings",
+      "type": "object",
+      "description": "DNA Target Coverage Settings",
+      "default": "",
+      "properties": {
+        "DNACOV_COVERAGE_LEVELS": {
+          "type": "array",
+          "default": [0, 10, 20, 50, 100, 181, 200],
+          "description": "Coverage Levels",
+          "help_text": "The coverage levels to investigate."
+        },
+        "DNACOV_FRACTION_LEVELS": {
+          "type": "array",
+          "default": [0.01, 0.05, 0.2],
+          "description": "Fraction Levels",
+          "help_text": "The fraction of mean coverage levels to investigate."
+        },
+        "DNACOV_DOUBLE_COUNT": {
+          "type": "boolean",
+          "description": "Double Count",
+          "help_text": "Report read coverage instead of fragment coverage."
+        },
+        "DNACOV_MIN_MAPQ": {
+          "type": "integer",
+          "default": 0,
+          "description": "Min MAPQ",
+          "help_text": "Minimum MAPQ for a read to be considered in counting.",
+          "minimum": 0
+        },
+        "DNACOV_MIN_BQ": {
+          "type": "integer",
+          "default": 1,
+          "description": "Min BQ",
+          "help_text": "Minimum BQ for a base to be considered in counting.",
+          "minimum": 1
+        }
+      }
+    },
+    "cnv_settings": {
+      "title": "CNV Settings",
+      "type": "object",
+      "description": "CNV Settings",
+      "default": "",
+      "properties": {
+        "CNV_STRONG_AMPLIFICATION_THRESHOLD": {
+          "type": "number",
+          "default": 3.0,
+          "description": "CNV Strong Amplification Threshold",
+          "help_text": "Copy gains must be above this fold change threshold to be categorized as strong evidence.",
+          "minimum": 1.000000000001
+        },
+        "CNV_STRONG_DELETION_THRESHOLD": {
+          "type": "number",
+          "default": 0.33333,
+          "description": "CNV Strong Deletion Threshold",
+          "help_text": "Copy losses must be below this fold change threshold to be categorized as strong evidence.",
+          "minimum": 0.0,
+          "maximum": 0.999999999999
+        },
+        "CNV_P_VALUE_THRESHOLD": {
+          "type": "number",
+          "default": 0.01,
+          "description": "CNV P-Value Threshold",
+          "help_text": "Copy gains or losses must have a p-value below this threshold to be categorized as strong evidence.",
+          "minimum": 0.0,
+          "maximum": 1.0
+        }
+      }
+    },
+    "cnv_2_0_settings": {
+      "title": "CNV 2.0 Settings",
+      "type": "object",
+      "description": "CNV 2.0 Settings",
+      "default": "",
+      "properties": {
+        "MIN_NUM_PRIMER": {
+          "type": "integer",
+          "default": 160,
+          "description": "Minimum Number of Primers Passing QC",
+          "help_text": "The minimum number of primers passing QC checks for the sample.",
+          "minimum": 0
+        },
+        "MIN_PCT_PRIMER": {
+          "type": "number",
+          "default": 80.0,
+          "description": "Minimum Percentage of Primers Passing QC",
+          "help_text": "The minimum percentage of primers passing QC checks for the sample.",
+          "minimum": 0.0,
+          "maximum": 100.0
+        },
+        "MIN_PRIMER_COUNTS": {
+          "type": "integer",
+          "default": 20,
+          "description": "Minimum Primer Read Counts",
+          "help_text": "Primer-level metric: Min total raw reads required to predict actual fragment number (otherwise measured unique read count is used).",
+          "minimum": 10,
+          "maximum": 100
+        },
+        "MAX_NORM_STDEV_PRIMER_FIT": {
+          "type": "number",
+          "default": 0.5,
+          "description": "Maximum Normalized Standard Deviation Primer Fit",
+          "help_text": "Primer-level metric: Max standard deviation allowed for statistical prediction of actual fragment number.",
+          "minimum": 0.01,
+          "maximum": 2.0
+        },
+        "GC_WINDOW_SIZE": {
+          "type": "integer",
+          "default": 500,
+          "description": "GC Window Size",
+          "help_text": "Primer-level metric: Number of base pairs downstream of primer used to calculate GC content for GC bias correction.",
+          "minimum": 50,
+          "maximum": 1000
+        },
+        "SEG_MIN_SIZE": {
+          "type": "integer",
+          "default": 4,
+          "description": "Segment Minimum Size",
+          "help_text": "Minimum number of primers used to create a segment.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "SEG_PENALTY": {
+          "type": "integer",
+          "default": 2,
+          "description": "Segment Penalty",
+          "help_text": "Segment-level metric: Penalty assigned during segmentation (higher penalty value = fewer segments).",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "OUTLIER_CRITICAL_VALUE": {
+          "type": "number",
+          "default": 2.58,
+          "description": "Outlier Critical Value",
+          "help_text": "Critical z-score value used to identify statistically significant outliers during outlier removal. Higher critical values yield fewer primers as outliers, and any value over 4.0 effectively turns outlier detection off.",
+          "minimum": 0.0,
+          "maximum": 10.0
+        },
+        "CNV_STRONG_ALPHA": {
+          "type": "number",
+          "default": 1e-5,
+          "description": "CNV Strong Alpha",
+          "help_text": "Threshold used to determine significance of p-values and whether segments are called as Strong CNV.",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "CNV_POSSIBLE_ALPHA": {
+          "type": "number",
+          "default": 0.01,
+          "description": "CNV Possible Alpha",
+          "help_text": "Threshold used to determine significance of p-values and whether segments are called as Possible CNV.",
+          "minimum": 0.0,
+          "maximum": 1.0
+        }
+      }
+    },
+    "ascn_settings": {
+      "title": "ASCN Settings",
+      "type": "object",
+      "description": "ASCN Settings",
+      "default": "",
+      "properties": {
+        "ASCN_LOWER_AF_BOUND": {
+          "type": "number",
+          "default": 0.1,
+          "description": "Lower allele fraction bound that is used to filter SNP data before segmentation.",
+          "help_text": "Lower allele fraction bound that is used to filter SNP data before segmentation.",
+          "minimum": 0.05,
+          "maximum": 0.5
+        },
+        "ASCN_LOH_WINDOW_SIZE": {
+          "type": "integer",
+          "default": 20000000,
+          "description": "Window size for reclaiming variants in pure LOH regions.",
+          "help_text": "Window size for reclaiming variants in pure LOH regions.",
+          "minimum": 1000000,
+          "maximum": 100000000
+        },
+        "ASCN_SEG_PENALTY": {
+          "type": "number",
+          "default": 5.0,
+          "description": "Penalty used during SNP segmentation.",
+          "help_text": "Penalty used during SNP segmentation.",
+          "minimum": 0.0,
+          "maximum": 10.0
+        },
+        "ASCN_SEG_MIN_SIZE": {
+          "type": "integer",
+          "default": 10,
+          "description": "Minimum segment size allowed in SNP segmentation.",
+          "help_text": "Minimum segment size allowed in SNP segmentation.",
+          "minimum": 0
+        },
+        "ASCN_UPPER_AF_BOUND": {
+          "type": "number",
+          "default": 0.9,
+          "description": "Upper allele fraction bound that is used to filter SNP data before segmentation.",
+          "help_text": "Upper allele fraction bound that is used to filter SNP data before segmentation.",
+          "minimum": 0.5,
+          "maximum": 0.95
+        },
+        "SNP_OUTLIER_CRITICAL_VALUE": {
+          "type": "number",
+          "default": 1.2,
+          "description": "SNP outlier critical value",
+          "help_text": "Critical z-score value used to identify statistically significant outliers during outlier removal. Higher critical values yield fewer variants as outliers, and any value over 4.0 effectively turns outlier detection off.",
+          "minimum": 0.0,
+          "maximum": 10.0
+        },
+        "SNP_OUTLIER_FLANK_SIZE": {
+          "type": "integer",
+          "default": 4,
+          "description": "SNP outlier flanking region size",
+          "help_text": "Flanking region size to use when computing z-scores. Higher values yield more primers as outliers; lower values yield fewer primers.",
+          "minimum": 1,
+          "maximum": 12
+        }
+      }
+    },
+    "hrd_settings": {
+      "title": "HRD Settings",
+      "type": "object",
+      "description": "HRD Settings",
+      "default": "",
+      "properties": {
+        "HRD_POS_THRESHOLD": {
+          "type": "number",
+          "default": 42.0,
+          "description": "HRD Positive Threshold",
+          "help_text": "The numerical score at or above which a sample is considered HRD 'positive'. Note: If the positive and negative thresholds are equal, then there is no 'intermediate' call.",
+          "minimum": 0.0
+        },
+        "HRD_NEG_THRESHOLD": {
+          "type": "number",
+          "default": 33.0,
+          "description": "HRD Negative Threshold",
+          "help_text": "The numerical score below which a sample is considered HRD 'negative'. If a sample falls at or above this score, but below the positive threshold, it will be classified as 'intermediate'. Note: If the positive and negative thresholds are equal, then there is no 'intermediate' call.",
+          "minimum": 0.0
+        },
+        "HRD_MIN_INDELS": {
+          "type": "integer",
+          "default": 5,
+          "description": "HRD Minimum Number Indels",
+          "help_text": "QC criteria: The number of indels passing filters and used from the input in the HRD score calculation.",
+          "minimum": 0,
+          "maximum": 30
+        }
+      }
+    },
+    "msi_settings": {
+      "title": "MSI Settings",
+      "type": "object",
+      "description": "MSI Settings",
+      "default": "",
+      "properties": {
+        "BASELINE": {
+          "type": "boolean",
+          "description": "Baseline",
+          "help_text": "Generate a new MSI baseline pkl file to test unknowns against"
+        },
+        "MIN_LOCI": {
+          "type": "integer",
+          "default": 25,
+          "description": "Minimum number of loci for MSI",
+          "help_text": "The minimum number of targeted microsatellite loci that must pass QC for a sample to get a percent unstable value and a MSI status call",
+          "minimum": 0
+        },
+        "MSI_MIN_DEPTH_PER_SAMPLE": {
+          "type": "integer",
+          "default": 35000,
+          "description": "Minimum Depth Per Sample for MSI",
+          "help_text": "Minimum read depth required for the sample to pass QC",
+          "minimum": 0
+        },
+        "MSI_STABLE_THRESHOLD": {
+          "type": "integer",
+          "default": 20,
+          "description": "Stable Threshold for MSI",
+          "help_text": "The maximum percentage of unstable loci for a sample to be considered MSI-Stable. Unstable loci percentages above this and less than MSI_HIGH_THRESHOLD will be considered MSI-Intermediate",
+          "minimum": 0
+        },
+        "MSI_HIGH_THRESHOLD": {
+          "type": "integer",
+          "default": 30,
+          "description": "High Threshold for MSI",
+          "help_text": "The minimum percentage of unstable loci for a sample to be considered MSI-High. Unstable loci percentages less than this and above MSI_STABLE_THRESHOLD will be considered MSI-Intermediate",
+          "minimum": 0
+        },
+        "MSI_ALPHA": {
+          "type": "number",
+          "default": 0.05,
+          "description": "MSI Alpha",
+          "help_text": "The maximum pval for a locus to be considered unstable",
+          "minimum": 0
+        },
+        "MIN_DEPTH_PER_LOCUS": {
+          "type": "integer",
+          "default": 25,
+          "description": "Minimum Depth Per Locus",
+          "help_text": "Minimum read depth required for a locus to pass QC",
+          "minimum": 0
+        }
+      }
+    },
+    "tmb_settings": {
+      "title": "TMB Settings",
+      "type": "object",
+      "description": "TMB Settings",
+      "default": "",
+      "properties": {
+        "TMB_MAX_PERCENT_BASES_LESS_THAN_EQUAL_200x_COVERAGE": {
+          "type": "number",
+          "default": 0.3,
+          "description": "TMB Max Percent Bases Less Than Equal 200 Times Coverage",
+          "help_text": "Maximum percentage of bases with less than or equal 200x coverage",
+          "minimum": 0.0
+        },
+        "TMB_MIN_UNIQUE_FRAGMENT_FILTERED_ON_TARGET": {
+          "type": "integer",
+          "default": 410,
+          "description": "Minimum Unique Fragment Filtered On-Target Ratio",
+          "help_text": "Minimum unique fragment filtered on target ratio for the sample to pass TMB QC, where unique fragment filtered on target value / gsp2 count of panel should be greater than or equal to this value.",
+          "minimum": 0
+        },
+        "TMB_HIGH_THRESHOLD": {
+          "type": "number",
+          "default": 20.0,
+          "description": "High Threshold for TMB",
+          "help_text": "The minimum score to classify a result as being TMB-High. Scores below this value but above \"Low Threshold for TMB\" will be classified as TMB-Intermediate. For VariantPlex Pan Solid Tumor and VariantPlex Complete Solid Tumor panels we recommend defaults of 20.0 and 17.5, respectively.",
+          "minimum": 0.0
+        },
+        "TMB_LOW_THRESHOLD": {
+          "type": "number",
+          "default": 5.0,
+          "description": "Low Threshold for TMB",
+          "help_text": "The maximum score to classify a result as being TMB-Low. Scores above this value but below \"High Threshold for TMB\" will be classified as TMB-Intermediate. For VariantPlex Pan Solid Tumor and VariantPlex Complete Solid Tumor panels we recommend defaults of 5.0 and 6.0, respectively.",
+          "minimum": 0.0
+        }
+      }
+    },
+    "hook_settings": {
+      "title": "Hook Settings",
+      "type": "object",
+      "description": "Hook Settings",
+      "default": "",
+      "properties": {
+        "PREHOOK_JSON": {
+          "type": "string",
+          "default": null,
+          "format": "file-path",
+          "help_text": "Pre-hook JSON configuration file",
+          "description": "Pre-hook JSON configuration file"
+        },
+        "POSTHOOK_JSON": {
+          "type": "string",
+          "default": null,
+          "format": "file-path",
+          "help_text": "Post-hook JSON configuration file",
+          "description": "Post-hook JSON configuration file"
+        },
+        "HOOK_OUTPUT_DIRECTORY": {
+          "type": "string",
+          "default": null,
+          "format": "directory-path",
+          "help_text": "Directory in which to write hook output files",
+          "description": "Directory in which to write hook output files"
+        },
+        "SCRIPT_NAME_KEY": {
+          "type": "string",
+          "default": "SCRIPT_NAME",
+          "help_text": "The key in the hook JSON that specifies the script name",
+          "description": "The key in the hook JSON that specifies the script name"
+        },
+        "LANGUAGE_KEY": {
+          "type": "string",
+          "default": "LANGUAGE_CALL",
+          "help_text": "The key in the hook JSON that specifies the script language",
+          "description": "The key in the hook JSON that specifies the script language"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/$defs/nextflow_settings"
+    },
+    {
+      "$ref": "#/$defs/general_analysis_settings"
+    },
+    {
+      "$ref": "#/$defs/experimental_account_settings"
+    },
+    {
+      "$ref": "#/$defs/pipeline_configuration_parameters"
+    },
+    {
+      "$ref": "#/$defs/network_settings"
+    },
+    {
+      "$ref": "#/$defs/structural_variant_analysis_settings"
+    },
+    {
+      "$ref": "#/$defs/variations_mutations_settings"
+    },
+    {
+      "$ref": "#/$defs/dna_target_coverage_settings"
+    },
+    {
+      "$ref": "#/$defs/cnv_settings"
+    },
+    {
+      "$ref": "#/$defs/cnv_2_0_settings"
+    },
+    {
+      "$ref": "#/$defs/ascn_settings"
+    },
+    {
+      "$ref": "#/$defs/hrd_settings"
+    },
+    {
+      "$ref": "#/$defs/msi_settings"
+    },
+    {
+      "$ref": "#/$defs/tmb_settings"
+    }
+  ]
+}
